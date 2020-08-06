@@ -1,0 +1,23 @@
+<div class="login">
+  <h2 class="login-header">Acceso</h2>
+  <form [formGroup]="authForm" class="login-container" (ngSubmit)="signIn()">
+    <p [ngClass]="{ 'has-error': isSubmitted && formControls.email.errors }">
+      <input type="email" placeholder="Email" formControlName="email">
+    </p>
+    <div *ngIf="isSubmitted && formControls.email.errors" class="help-block">
+      <div *ngIf="formControls.email.errors.required">El email es obligatorio</div>
+    </div>
+    <p [ngClass]="{ 'has-error': isSubmitted && formControls.password.errors }">
+      <input type="password" placeholder="Contraseña" formControlName="password">
+    </p>
+    <div *ngIf="isSubmitted && formControls.password.errors" class="help-block">
+      <div *ngIf="formControls.password.errors.required">La contraseña es obligatoria</div>
+    </div>
+    <div *ngIf="isSubmitted && authError" class="help-block">
+      <p *ngIf="authError">Email o Contraseña incorrectos</p>
+    </div>
+    <p>
+      <input type="submit" value="Entrar">
+    </p>
+  </form>
+</div>
