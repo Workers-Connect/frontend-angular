@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { AdminComponent } from './admin/admin.component';
 import { UsersComponent } from './users/users.component';
+import { UserFormComponent } from './user-form/user-form.component';
 import { AuthGuard } from './_helpers/auth.guard';
 
 const routes: Routes = [
@@ -11,6 +12,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'users', component: UsersComponent, canActivate: [AuthGuard]},
+  { path: 'user-form', component: UserFormComponent, canActivate: [AuthGuard]},
   { path: '**', redirectTo: '' }
 ];
 
