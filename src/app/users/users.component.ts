@@ -79,6 +79,20 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  openDialogDelete(
+    _id: string = null,
+  ): void {
+    const dialogRef = this.dialog.open(DialogUserDeleteDialog, {
+      width: '500px',
+      data: {_id}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      _id = result;
+    });
+  }
+
 }
 
 @Component({
@@ -143,7 +157,7 @@ export class DialogUserFormDialog {
         .set('company', localStorage.getItem('company'));
 
     if (this.userForm.value._id !== null) {
-      this.http.put<any>(`${environment.apiUrl}/usuario/${this.userForm.value._id}`, body, this.httpOptions).subscribe(
+      this.http.put<any>(`${environment.apiUrl}/usuario/${this.data._id}`, body, this.httpOptions).subscribe(
         (val) => {
           this.snackBar.open('Confirmado', 'Usuario editado', {
             duration: 2000,
@@ -169,5 +183,47 @@ export class DialogUserFormDialog {
           });
         });
     }
+  }
+}
+
+@Component({
+  selector: 'app-users-delete-dialog',
+  templateUrl: 'dialog-user-delete.html',
+})
+export class DialogUserDeleteDialog {
+
+  httpOptions = {
+    headers: new HttpHeaders({
+    'Content-Type':  'application/x-www-form-urlencoded',
+    Authorization: localStorage.getItem('ACCESS_TOKEN')
+    })
+  };
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogUserDeleteDialog>,
+    private snackBar: MatSnackBar,
+    private http: HttpClient,
+    @Inject(MAT_DIALOG_DATA) public data: UserData
+  ) {}
+
+  ngOnInit(): void {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onDelete(){
+    this.http.delete<any>(`${environment.apiUrl}/usuario/${this.data._id}`, this.httpOptions).subscribe(
+      (val) => {
+        this.snackBar.open('Confirmado', 'Usuario eliminado', {
+          duration: 2000,
+        });
+        this.onNoClick();
+      },
+      err => {
+        this.snackBar.open('Error', 'No se pudo eliminar el usuario', {
+          duration: 2000,
+        });
+      });
   }
 }

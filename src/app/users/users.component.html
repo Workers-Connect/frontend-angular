@@ -37,7 +37,10 @@
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
-            <td mat-cell *matCellDef="let row"> <mat-icon (click)="openDialog(row._id, row.name, row.email, row.password, row.role, row.status)">edit</mat-icon> <mat-icon>delete</mat-icon> </td>
+            <td mat-cell *matCellDef="let row"> 
+                <mat-icon (click)="openDialog(row._id, row.name, row.email, row.password, row.role, row.status)">edit</mat-icon> 
+                <mat-icon (click)="openDialogDelete(row._id)">delete</mat-icon>
+            </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
