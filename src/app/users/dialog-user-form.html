@@ -1,0 +1,45 @@
+<form [formGroup]="userForm" (ngSubmit)="submit()">
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>ID</mat-label>
+                <input matInput #input [formControl]="formControls._id" disabled>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>Nombre</mat-label>
+                <input matInput #input [formControl]="formControls.name" required>
+                <mat-error *ngIf="formControls.name.errors?.required">El email es obligatorio</mat-error>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput #input [formControl]="formControls.email" required>
+                <mat-error *ngIf="formControls.email.errors?.required">El email es obligatorio</mat-error>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="fill" *ngIf="!data._id">
+                <mat-label>Contraseña</mat-label>
+                <input matInput #input [type]="hide ? 'password' : 'text'" [formControl]="formControls.password" required>
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Ocultar'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="formControls.password.errors?.required">La contraseña es obligatoria</mat-error>
+            </mat-form-field>
+        </p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button type="button" (click)="onNoClick()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" *ngIf="!data._id">Crear</button>
+        <button mat-raised-button color="primary" type="submit" *ngIf="data._id">Actualizar</button>
+    </div>
+</form>
+
+
+<!-- Copyright 2020 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license -->
