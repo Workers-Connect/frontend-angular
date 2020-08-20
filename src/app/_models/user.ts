@@ -5,4 +5,5 @@ export interface User {
     role: string;
     img: string;
     status: boolean;
+    company: string;
 }
