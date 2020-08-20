@@ -2,7 +2,7 @@
     <h1 mat-dialog-title>{{title}}</h1>
     <div mat-dialog-content>
         <p>
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" *ngIf="data._id">
                 <mat-label>ID</mat-label>
                 <input matInput #input [formControl]="formControls._id" disabled>
             </mat-form-field>
@@ -29,6 +29,15 @@
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
                 <mat-error *ngIf="formControls.password.errors?.required">La contraseña es obligatoria</mat-error>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>Permisos</mat-label>
+                <mat-select [formControl]="formControls.role">
+                    <mat-option value="USER_ROLE">Usuario</mat-option>
+                    <mat-option value="ADMIN_ROLE">Administrador</mat-option>
+                </mat-select>
             </mat-form-field>
         </p>
     </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -7,7 +7,8 @@ import {MatTableDataSource} from '@angular/material/table';
 
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { UserService } from '../_services/user.service';
 
 export interface UserData {
   _id: string;
@@ -16,6 +17,11 @@ export interface UserData {
   password: string;
   role: string;
   status: boolean;
+}
+
+interface Role {
+  value: string;
+  viewValue: string;
 }
 
 @Component({
@@ -27,28 +33,19 @@ export class UsersComponent implements OnInit {
 
   displayedColumns: string[] = ['_id', 'email', 'name', 'role', 'status', 'actions'];
   dataSource: MatTableDataSource<UserData>;
-  httpOptions = {
-    headers: new HttpHeaders({
-    'Content-Type': 'application/x-www-form-urlencoded',
-    Authorization: localStorage.getItem('ACCESS_TOKEN')
-    })
-  };
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  constructor( private http: HttpClient, public dialog: MatDialog ) { }
+  constructor( public dialog: MatDialog, private userService: UserService ) { }
 
   ngOnInit(): void {
-    this.getUsers().subscribe((data: any[]) => {
-      this.dataSource = new MatTableDataSource(data['users']);
+    this.userService.users.subscribe((data: any[]) => {
+      this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
-  }
-
-  getUsers(){
-    return this.http.get(`${environment.apiUrl}/usuario`, this.httpOptions);
+    this.userService.getAll();
   }
 
   applyFilter(event: Event) {
@@ -106,19 +103,15 @@ export class DialogUserFormDialog {
   isSubmitted  =  false;
   userError = false;
   hide = true;
-
-  httpOptions = {
-    headers: new HttpHeaders({
-    'Content-Type':  'application/x-www-form-urlencoded',
-    Authorization: localStorage.getItem('ACCESS_TOKEN')
-    })
-  };
+  roles: Role[] = [
+    {value: 'USER_ROLE', viewValue: 'Usuario'},
+    {value: 'ADMIN_ROLE', viewValue: 'Administrador'},
+  ];
 
   constructor(
     public dialogRef: MatDialogRef<DialogUserFormDialog>,
     private formBuilder: FormBuilder,
-    private snackBar: MatSnackBar,
-    private http: HttpClient,
+    private userService: UserService,
     @Inject(MAT_DIALOG_DATA) public data: UserData
   ) {}
 
@@ -129,7 +122,7 @@ export class DialogUserFormDialog {
       name: [this.data.name, [Validators.required]],
       email: [this.data.email, [Validators.required, Validators.email]],
       password: [null, [Validators.required]],
-      role: [this.data.role]
+      role: [(this.data.role ? this.data.role : 'USER_ROLE'), [Validators.required]]
     });
     if (this.data._id !== null) {
       this.userForm.removeControl('password');
@@ -156,32 +149,12 @@ export class DialogUserFormDialog {
         .set('role', this.userForm.value.role)
         .set('company', localStorage.getItem('company'));
 
-    if (this.userForm.value._id !== null) {
-      this.http.put<any>(`${environment.apiUrl}/usuario/${this.data._id}`, body, this.httpOptions).subscribe(
-        (val) => {
-          this.snackBar.open('Confirmado', 'Usuario editado', {
-            duration: 2000,
-          });
-          this.onNoClick();
-        },
-        err => {
-          this.snackBar.open('Error', 'No se pudo editar el usuario', {
-            duration: 2000,
-          });
-        });
+    if (this.data._id !== null) {
+      this.userService.update(this.data._id, body);
+      this.onNoClick();
     }else{
-      this.http.post<any>(`${environment.apiUrl}/usuario/`, body, this.httpOptions).subscribe(
-        (val) => {
-          this.snackBar.open('Confirmado', 'Usuario creado', {
-            duration: 2000,
-          });
-          this.onNoClick();
-        },
-        err => {
-          this.snackBar.open('Error', 'No se pudo crear el usuario', {
-            duration: 2000,
-          });
-        });
+      this.userService.create(body);
+      this.onNoClick();
     }
   }
 }
@@ -192,17 +165,9 @@ export class DialogUserFormDialog {
 })
 export class DialogUserDeleteDialog {
 
-  httpOptions = {
-    headers: new HttpHeaders({
-    'Content-Type':  'application/x-www-form-urlencoded',
-    Authorization: localStorage.getItem('ACCESS_TOKEN')
-    })
-  };
-
   constructor(
     public dialogRef: MatDialogRef<DialogUserDeleteDialog>,
-    private snackBar: MatSnackBar,
-    private http: HttpClient,
+    private userService: UserService,
     @Inject(MAT_DIALOG_DATA) public data: UserData
   ) {}
 
@@ -213,17 +178,7 @@ export class DialogUserDeleteDialog {
   }
 
   onDelete(){
-    this.http.delete<any>(`${environment.apiUrl}/usuario/${this.data._id}`, this.httpOptions).subscribe(
-      (val) => {
-        this.snackBar.open('Confirmado', 'Usuario eliminado', {
-          duration: 2000,
-        });
-        this.onNoClick();
-      },
-      err => {
-        this.snackBar.open('Error', 'No se pudo eliminar el usuario', {
-          duration: 2000,
-        });
-      });
+    this.userService.delete(this.data._id);
+    this.onNoClick();
   }
 }
