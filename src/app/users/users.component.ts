@@ -121,11 +121,10 @@ export class DialogUserFormDialog {
       _id: new FormControl({value: this.data._id, disabled: true}),
       name: [this.data.name, [Validators.required]],
       email: [this.data.email, [Validators.required, Validators.email]],
-      password: [null, [Validators.required]],
+      password: [''],
       role: [(this.data.role ? this.data.role : 'USER_ROLE'), [Validators.required]]
     });
     if (this.data._id !== null) {
-      this.userForm.removeControl('password');
       this.title = 'Actualizar usuario';
     }
   }

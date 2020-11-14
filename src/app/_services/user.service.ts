@@ -63,7 +63,6 @@ export class UserService {
   update(idUser: string, user: HttpParams) {
     this.http.put<any>(`${environment.apiUrl}/usuario/${idUser}`, user, this.httpOptions).subscribe(
       (data) => {
-        console.log(data);
         this.dataList.users.forEach((user, i) => {
           if (user._id === data['usuario']._id) { this.dataList.users[i] = data['usuario']; }
         });
