@@ -22,13 +22,13 @@
             </mat-form-field>
         </p>
         <p>
-            <mat-form-field appearance="fill" *ngIf="!data._id">
+            <mat-form-field appearance="fill">
                 <mat-label>Contraseña</mat-label>
                 <input matInput #input [type]="hide ? 'password' : 'text'" [formControl]="formControls.password" required>
                 <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Ocultar'" [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
-                <mat-error *ngIf="formControls.password.errors?.required">La contraseña es obligatoria</mat-error>
+                <mat-error *ngIf="!data._id && formControls.password.errors?.required">La contraseña es obligatoria</mat-error>
             </mat-form-field>
         </p>
         <p>

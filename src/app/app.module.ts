@@ -10,6 +10,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AdminComponent } from './admin/admin.component';
 import { UsersComponent, DialogUserFormDialog, DialogUserDeleteDialog } from './users/users.component';
+import { ChangepasswordComponent } from './changepassword/changepassword.component';
+import { ResetpasswordComponent } from './changepassword/resetpassword.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { UsersComponent, DialogUserFormDialog, DialogUserDeleteDialog } from './
     AdminComponent,
     UsersComponent,
     DialogUserFormDialog,
-    DialogUserDeleteDialog
+    DialogUserDeleteDialog,
+    ChangepasswordComponent,
+    ResetpasswordComponent
   ],
   imports: [
     BrowserModule,
